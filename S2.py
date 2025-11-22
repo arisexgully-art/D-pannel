@@ -41,7 +41,7 @@ bot = Bot(token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode=Pars
 dp = Dispatcher()
 
 sent_messages = []
-is_polling_active = True # Render এ ডিফল্টভাবে চালু থাকবে
+is_polling_active = True 
 credential_mode = {}
 client_session = None 
 
@@ -56,7 +56,6 @@ async def start_web_server():
     app.router.add_get('/', handle)
     runner = web.AppRunner(app)
     await runner.setup()
-    # Render এই PORT এনভায়রনমেন্ট ভেরিয়েবলটি দেয়
     port = int(os.environ.get("PORT", 8080))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
@@ -80,46 +79,57 @@ def get_otp_code(text):
     if match_any: return match_any.group(0)
     return "No-Code"
 
-def get_country_info(row_data, phone_number=""):
-    text = (str(row_data) + str(phone_number)).upper()
-    if "VENEZUELA" in text or text.startswith("58"): return "Venezuela", "🇻🇪"
-    if "BRAZIL" in text or text.startswith("55"): return "Brazil", "🇧🇷"
-    if "ARGENTINA" in text or text.startswith("54"): return "Argentina", "🇦🇷"
-    if "COLOMBIA" in text or text.startswith("57"): return "Colombia", "🇨🇴"
-    if "PERU" in text or text.startswith("51"): return "Peru", "🇵🇪"
-    if "NEPAL" in text or text.startswith("977"): return "Nepal", "🇳🇵"
-    if "INDIA" in text or text.startswith("91"): return "India", "🇮🇳"
-    if "BANGLADESH" in text or text.startswith("880"): return "Bangladesh", "🇧🇩"
-    if "PAKISTAN" in text or text.startswith("92"): return "Pakistan", "🇵🇰"
-    if "INDONESIA" in text or text.startswith("62"): return "Indonesia", "🇮🇩"
-    if "VIETNAM" in text or text.startswith("84"): return "Vietnam", "🇻🇳"
-    if "THAILAND" in text or text.startswith("66"): return "Thailand", "🇹🇭"
-    if "PHILIPPINES" in text or text.startswith("63"): return "Philippines", "🇵🇭"
-    if "MYANMAR" in text or text.startswith("95"): return "Myanmar", "🇲🇲"
-    if "CAMBODIA" in text or text.startswith("855"): return "Cambodia", "🇰🇭"
-    if "LAOS" in text or text.startswith("856"): return "Laos", "🇱🇦"
-    if "AFGHAN" in text or text.startswith("93"): return "Afghanistan", "🇦🇫"
-    if "CHINA" in text or text.startswith("86"): return "China", "🇨🇳"
-    if "MALAYSIA" in text or text.startswith("60"): return "Malaysia", "🇲🇾"
-    if "SRI LANKA" in text or text.startswith("94"): return "Sri Lanka", "🇱🇰"
-    if "SUDAN" in text or text.startswith("249"): return "Sudan", "🇸🇩"
-    if "EGYPT" in text or text.startswith("20"): return "Egypt", "🇪🇬"
-    if "SAUDI" in text or text.startswith("966"): return "Saudi Arabia", "🇸🇦"
-    if "UAE" in text or text.startswith("971"): return "UAE", "🇦🇪"
-    if "IRAN" in text or text.startswith("98"): return "Iran", "🇮🇷"
-    if "TURKEY" in text or text.startswith("90"): return "Turkey", "🇹🇷"
-    if "KENYA" in text or text.startswith("254"): return "Kenya", "🇰🇪"
-    if "NIGERIA" in text or text.startswith("234"): return "Nigeria", "🇳🇬"
-    if "MOROCCO" in text or text.startswith("212"): return "Morocco", "🇲🇦"
-    if "SOUTH AFRICA" in text or text.startswith("27"): return "South Africa", "🇿🇦"
-    if "USA" in text or text.startswith("1"): return "USA", "🇺🇸"
-    if "UK" in text or text.startswith("44"): return "UK", "🇬🇧"
-    if "RUSSIA" in text or text.startswith("7"): return "Russia", "🇷🇺"
-    if "GERMANY" in text or text.startswith("49"): return "Germany", "🇩🇪"
-    if "FRANCE" in text or text.startswith("33"): return "France", "🇫🇷"
+def get_country_info(row_data, phone_number):
+    # row_data টেক্সট চেক করার জন্য (যদি নাম থাকে)
+    text = str(row_data).upper()
+    # phone_number সঠিকভাবে স্ট্রিং এ কনভার্ট করা
+    p_num = str(phone_number).strip()
+
+    # --- New Countries Added ---
+    if "COMOROS" in text or p_num.startswith("269"): return "Comoros", "🇰🇲"
+    if "ETHIOPIA" in text or p_num.startswith("251"): return "Ethiopia", "🇪🇹"
+    
+    # --- Existing Countries (Fixed Prefix Logic) ---
+    if "VENEZUELA" in text or p_num.startswith("58"): return "Venezuela", "🇻🇪"
+    if "BRAZIL" in text or p_num.startswith("55"): return "Brazil", "🇧🇷"
+    if "ARGENTINA" in text or p_num.startswith("54"): return "Argentina", "🇦🇷"
+    if "COLOMBIA" in text or p_num.startswith("57"): return "Colombia", "🇨🇴"
+    if "PERU" in text or p_num.startswith("51"): return "Peru", "🇵🇪"
+    if "NEPAL" in text or p_num.startswith("977"): return "Nepal", "🇳🇵"
+    if "INDIA" in text or p_num.startswith("91"): return "India", "🇮🇳"
+    if "BANGLADESH" in text or p_num.startswith("880"): return "Bangladesh", "🇧🇩"
+    if "PAKISTAN" in text or p_num.startswith("92"): return "Pakistan", "🇵🇰"
+    if "INDONESIA" in text or p_num.startswith("62"): return "Indonesia", "🇮🇩"
+    if "VIETNAM" in text or p_num.startswith("84"): return "Vietnam", "🇻🇳"
+    if "THAILAND" in text or p_num.startswith("66"): return "Thailand", "🇹🇭"
+    if "PHILIPPINES" in text or p_num.startswith("63"): return "Philippines", "🇵🇭"
+    if "MYANMAR" in text or p_num.startswith("95"): return "Myanmar", "🇲🇲"
+    if "CAMBODIA" in text or p_num.startswith("855"): return "Cambodia", "🇰🇭"
+    if "LAOS" in text or p_num.startswith("856"): return "Laos", "🇱🇦"
+    if "AFGHAN" in text or p_num.startswith("93"): return "Afghanistan", "🇦🇫"
+    if "CHINA" in text or p_num.startswith("86"): return "China", "🇨🇳"
+    if "MALAYSIA" in text or p_num.startswith("60"): return "Malaysia", "🇲🇾"
+    if "SRI LANKA" in text or p_num.startswith("94"): return "Sri Lanka", "🇱🇰"
+    if "SUDAN" in text or p_num.startswith("249"): return "Sudan", "🇸🇩"
+    # Egypt Fixed: এখন আর তারিখ (2025) এর সাথে মিলবে না, শুধু নাম্বারের সাথে মিলবে
+    if "EGYPT" in text or p_num.startswith("20"): return "Egypt", "🇪🇬"
+    if "SAUDI" in text or p_num.startswith("966"): return "Saudi Arabia", "🇸🇦"
+    if "UAE" in text or p_num.startswith("971"): return "UAE", "🇦🇪"
+    if "IRAN" in text or p_num.startswith("98"): return "Iran", "🇮🇷"
+    if "TURKEY" in text or p_num.startswith("90"): return "Turkey", "🇹🇷"
+    if "KENYA" in text or p_num.startswith("254"): return "Kenya", "🇰🇪"
+    if "NIGERIA" in text or p_num.startswith("234"): return "Nigeria", "🇳🇬"
+    if "MOROCCO" in text or p_num.startswith("212"): return "Morocco", "🇲🇦"
+    if "SOUTH AFRICA" in text or p_num.startswith("27"): return "South Africa", "🇿🇦"
+    if "USA" in text or p_num.startswith("1"): return "USA", "🇺🇸"
+    if "UK" in text or p_num.startswith("44"): return "UK", "🇬🇧"
+    if "RUSSIA" in text or p_num.startswith("7"): return "Russia", "🇷🇺"
+    if "GERMANY" in text or p_num.startswith("49"): return "Germany", "🇩🇪"
+    if "FRANCE" in text or p_num.startswith("33"): return "France", "🇫🇷"
     if "CANADA" in text: return "Canada", "🇨🇦"
-    if "ROMANIA" in text or text.startswith("40"): return "Romania", "🇷🇴"
-    if "NETHERLANDS" in text or text.startswith("31"): return "Netherlands", "🇳🇱"
+    if "ROMANIA" in text or p_num.startswith("40"): return "Romania", "🇷🇴"
+    if "NETHERLANDS" in text or p_num.startswith("31"): return "Netherlands", "🇳🇱"
+    
     return "Unknown", "🏳️"
 
 # ================== ASYNC NETWORK ==================
@@ -198,8 +208,11 @@ async def scanner_loop():
                         phone_number = row[2]
                         if str(phone_number) == "0" or len(str(phone_number)) < 5: continue
                         unique_id = f"{phone_number}_{msg_time}"
+                        
                         if unique_id not in sent_messages:
-                            flag, country_name = get_country_info(full_row_text)
+                            # এখানে পরিবর্তন করা হয়েছে: phone_number আলাদাভাবে পাঠানো হচ্ছে
+                            flag, country_name = get_country_info(full_row_text, phone_number)
+                            
                             otp = get_otp_code(full_row_text)
                             service = "WhatsApp"
                             masked_num = mask_number(phone_number)
@@ -224,7 +237,6 @@ async def scanner_loop():
         await asyncio.sleep(5)
 
 async def main():
-    # ওয়েব সার্ভার এবং বট একসাথে রান হবে
     await asyncio.gather(
         start_web_server(),
         scanner_loop(),
